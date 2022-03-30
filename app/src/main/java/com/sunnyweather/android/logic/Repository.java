@@ -1,21 +1,22 @@
 package com.sunnyweather.android.logic;
 
+import static java.lang.Thread.sleep;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.sunnyweather.android.logic.model.Place;
 import com.sunnyweather.android.logic.model.PlaceResponse;
 import com.sunnyweather.android.logic.network.SunnyWeatherNetWork;
 import java.util.List;
 
 public class Repository {
     //@Description 仓库类，封装了许多数据获取操作，提供数据给ViewModel层，同时接收ViewModel层的数据请求
-    private static MutableLiveData<List<Place>> placesData = new MutableLiveData<>();
+    private static MutableLiveData<List<PlaceResponse.Place>> placesData = new MutableLiveData<>();
     final static SunnyWeatherNetWork sunnyWeatherNetwork = new SunnyWeatherNetWork();
-    private static List<Place> places;
+    private static List<PlaceResponse.Place> places;
 
-    public MutableLiveData<List<Place>> searchPlaces(String query){
+    public MutableLiveData<List<PlaceResponse.Place>> searchPlaces(String query){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -26,8 +27,9 @@ public class Repository {
                      *
                      * */
                     final PlaceResponse placeResponse = sunnyWeatherNetwork.searchPlaces(query);
+
                     if (placeResponse.getStatus().equals("ok")) {//如果状态ok了，一般来说places就不会有空指针异常
-                        places = placeResponse.getPlace();// 获取到包含地区信息的list
+                        places = placeResponse.getPlaces();// 获取到包含地区信息的list
                         Log.d("Repository","place response success " );
                         placesData.postValue(places);//将list传入Livedata内，并准备返回
                     } else {
@@ -42,6 +44,6 @@ public class Repository {
                 }
             }
         }).start();
-        return placesData;
+        return placesData;//返回livedata
     }
 }

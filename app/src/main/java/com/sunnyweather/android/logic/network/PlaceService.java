@@ -9,6 +9,6 @@ import retrofit2.http.Query;
 
 public interface PlaceService {
 
-    @GET("v2/place?token="+ SunnyWeatherApplication.TOKEN+"&lang=zh_CN")
+    @GET("v2/place?token="+SunnyWeatherApplication.TOKEN+"&lang=zh_CN")
     public Call<PlaceResponse> serarchPlaces(@Query("query") String query);
 }

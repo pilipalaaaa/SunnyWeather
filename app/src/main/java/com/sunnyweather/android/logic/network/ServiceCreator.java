@@ -9,8 +9,10 @@ public class ServiceCreator {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
-    public static <T> T create(Class<T> serviceClass){
-        return retrofit.create(serviceClass);
+
+    public static PlaceService PCreate(Class<PlaceService> placeServiceClass){
+        PlaceService placeService = retrofit.create(placeServiceClass);
+        return placeService;
     }
 
 

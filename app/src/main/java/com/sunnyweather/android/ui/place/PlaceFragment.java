@@ -1,6 +1,5 @@
 package com.sunnyweather.android.ui.place;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sunnyweather.android.R;
-import com.sunnyweather.android.logic.model.Place;
+import com.sunnyweather.android.logic.model.PlaceResponse;
 
 import java.util.List;
 
@@ -69,6 +68,7 @@ public class PlaceFragment extends Fragment {
                 else {
                     viewModel.searchPlace(content);
                     //测试下面是这里未能获取到livedata
+
                     Log.d("PlaceFragment","" + viewModel.placeLiveData.getValue());
                 }
             }
@@ -80,9 +80,9 @@ public class PlaceFragment extends Fragment {
         });
 
         //转换后的livedata观察数据变化
-        viewModel.placeLiveData.observe(getViewLifecycleOwner(), new Observer<List<Place>>() {
+        viewModel.placeLiveData.observe(getViewLifecycleOwner(), new Observer<List<PlaceResponse.Place>>() {
             @Override
-            public void onChanged(List<Place> placeList) {
+            public void onChanged(List<PlaceResponse.Place> placeList) {
                 if(placeList != null){
                     //Log.d("PlaceFragment","placeList in final LiveData is "+ placeList.get(0));
                     Log.d("PlaceFragment","数据已变化");

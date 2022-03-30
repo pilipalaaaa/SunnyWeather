@@ -9,16 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sunnyweather.android.R;
-import com.sunnyweather.android.logic.model.Place;
 import com.sunnyweather.android.logic.model.PlaceResponse;
 
 import java.util.List;
 
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> {
 
-    private List<Place>placeList;
+    private List<PlaceResponse.Place>placeList;
     private PlaceFragment fragment;
-    public PlaceAdapter(PlaceFragment fragment,List<Place> placeList){
+    public PlaceAdapter(PlaceFragment fragment,List<PlaceResponse.Place> placeList){
         this.placeList = placeList;
         this.fragment = fragment;
     }
@@ -32,7 +31,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Place place = placeList.get(position);
+        PlaceResponse.Place place = placeList.get(position);
         holder.placeName.setText(place.getName());
         holder.placeAddress.setText(place.getAddress());
     }

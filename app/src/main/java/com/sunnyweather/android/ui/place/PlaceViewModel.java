@@ -8,17 +8,22 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.sunnyweather.android.logic.Repository;
-import com.sunnyweather.android.logic.model.Place;
+import com.sunnyweather.android.logic.model.PlaceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlaceViewModel extends ViewModel {
-    private static MutableLiveData<String> searchLiveData = new MutableLiveData<>();
-    private  static List<Place> placeList = new ArrayList<>();
+    private  static MutableLiveData<String> searchLiveData =
+            new MutableLiveData<>();
     private Repository repository = new Repository() ;
-    public final LiveData<List<Place>> placeLiveData = Transformations.switchMap(searchLiveData,
+
+    private  static List<PlaceResponse.Place> placeList = new ArrayList<>();
+
+    public final LiveData<List<PlaceResponse.Place>> placeLiveData = Transformations.switchMap(searchLiveData,
             query -> repository.searchPlaces(query));
+
+    //此方法只要被调用，就会执行上面的switchmap
     public void searchPlace(String query){
         Log.d("PlaceViewModel","query is " + query);
         searchLiveData.postValue(query);
@@ -26,10 +31,10 @@ public class PlaceViewModel extends ViewModel {
     public void listClear(){
         placeList.clear();
     }
-    public static List<Place> getPlaceList() {
+    public List<PlaceResponse.Place> getPlaceList() {
         return placeList;
     }
-    public void addAllList(List<Place> places){
+    public void addAllList(List<PlaceResponse.Place> places){
         placeList.addAll(places);
     }
 }
