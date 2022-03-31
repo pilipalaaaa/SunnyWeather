@@ -46,7 +46,7 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        //如果没有等于mainActivity会导致无限跳转
         if(getActivity().getClass().equals(MainActivity.class)&&viewModel.isPlaceSaved()){
             Log.d("Test","进入读取存储的模式");
             PlaceResponse.Place place = viewModel.getSavedPlace();

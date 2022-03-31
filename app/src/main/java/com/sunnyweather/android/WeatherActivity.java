@@ -1,16 +1,22 @@
 package com.sunnyweather.android;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,6 +36,17 @@ import java.util.Locale;
 
 public class WeatherActivity extends AppCompatActivity {
     private static WeatherViewModel viewModel;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private DrawerLayout drawerLayout;
+
+    public DrawerLayout getDrawerLayout() {
+        return drawerLayout;
+    }
+
+    public static WeatherViewModel getViewModel() {
+        return viewModel;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +61,9 @@ public class WeatherActivity extends AppCompatActivity {
 
         //获取viewmodel实例
         viewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
        if(viewModel.locationLng.isEmpty()){
            if (getIntent().getStringExtra("location_lng")==null){
                viewModel.locationLng = "";
@@ -79,12 +99,63 @@ public class WeatherActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(getApplicationContext(),"获取天气信息失败",Toast.LENGTH_SHORT).show();;
-
                 }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        refreshWeather();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshWeather();
             }
         });
         //数据丢进去引起switchmap
+//        viewModel.refreshWeather(viewModel.locationLng,viewModel.locationLat);
+
+        //*****************************************************************************
+        //*****************************************************************************
+        //下面是滑动菜单切换城市的逻辑
+        Button navBtn = findViewById(R.id.navBtn);
+        navBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                InputMethodManager manager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(drawerView.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+                //滑动菜单隐藏时隐藏键盘
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+    }
+
+    //封装的刷新天气信息的逻辑
+    public void refreshWeather(){
+        //传入设置好的经纬度
         viewModel.refreshWeather(viewModel.locationLng,viewModel.locationLat);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     //将viewmodel数据显示在view界面上
