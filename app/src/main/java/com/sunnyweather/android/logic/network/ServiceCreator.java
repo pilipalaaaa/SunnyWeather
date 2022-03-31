@@ -14,6 +14,9 @@ public class ServiceCreator {
         PlaceService placeService = retrofit.create(placeServiceClass);
         return placeService;
     }
-
+    public static WeatherService WCreate(Class<WeatherService> weatherServiceClass){
+        WeatherService weatherService = retrofit.create(weatherServiceClass);
+        return weatherService;
+    }
 
 }

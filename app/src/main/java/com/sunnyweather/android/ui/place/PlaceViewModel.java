@@ -37,4 +37,14 @@ public class PlaceViewModel extends ViewModel {
     public void addAllList(List<PlaceResponse.Place> places){
         placeList.addAll(places);
     }
+
+    public static void savePlace(PlaceResponse.Place place){
+        Repository.savePlace(place);
+    }
+    public static PlaceResponse.Place getSavedPlace(){
+        return Repository.getSavedPlace();
+    }
+    public static Boolean isPlaceSaved(){
+        return Repository.isPlaceSaved();
+    }
 }

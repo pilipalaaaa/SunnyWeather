@@ -6,7 +6,11 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.sunnyweather.android.logic.dao.PlaceDao;
+import com.sunnyweather.android.logic.model.DailyResponse;
 import com.sunnyweather.android.logic.model.PlaceResponse;
+import com.sunnyweather.android.logic.model.RealtimeResponse;
+import com.sunnyweather.android.logic.model.Weather;
 import com.sunnyweather.android.logic.network.SunnyWeatherNetWork;
 import java.util.List;
 
@@ -45,5 +49,44 @@ public class Repository {
             }
         }).start();
         return placesData;//返回livedata
+    }
+    public MutableLiveData<Weather> refreshWeather(String lng,String lat){
+        MutableLiveData<Weather> weatherData = new MutableLiveData<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    RealtimeResponse realtimeResponse = sunnyWeatherNetwork.getRealtimeWeather(lng,lat);
+                    DailyResponse dailyResponse = sunnyWeatherNetwork.getDailyWeather(lng,lat);
+                    Log.d("Repository","refresh Weather 数据申请中");
+                    if(realtimeResponse.getStatus().equals("ok") && dailyResponse.getStatus().equals("ok")){
+                        Weather weather = new Weather(realtimeResponse.getResult().getRealtime(), dailyResponse.getResult().getDaily());
+                        weatherData.postValue(weather);
+                    }else{
+                        Log.d("Repository", "Daily response status is" + dailyResponse.getStatus());
+                        Log.d("Repository", "Realtime response error is" + realtimeResponse.getError());
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("Repository","weather network Error!");
+                }
+                finally {
+                    Log.d("Repository","refresh finish!");
+                }
+            }
+        }).start();
+        return weatherData;
+    }
+
+    //物理存储地点信息
+    public static void savePlace(PlaceResponse.Place place){
+        PlaceDao.savePlace(place);
+    }
+    public static PlaceResponse.Place getSavedPlace(){
+        return PlaceDao.getSavedPlace();
+    }
+    public static Boolean isPlaceSaved(){
+        return PlaceDao.isPlaceSaved();
     }
 }

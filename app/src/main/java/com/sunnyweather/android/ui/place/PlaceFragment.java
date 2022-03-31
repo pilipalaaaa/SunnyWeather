@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.place;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,14 +20,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sunnyweather.android.MainActivity;
 import com.sunnyweather.android.R;
+import com.sunnyweather.android.WeatherActivity;
 import com.sunnyweather.android.logic.model.PlaceResponse;
+import com.sunnyweather.android.logic.model.Weather;
 
 import java.util.List;
 
 public class PlaceFragment extends Fragment {
     private static PlaceViewModel viewModel;
     private PlaceAdapter adapter;
+
+    public static PlaceViewModel getViewModel() {
+        return viewModel;
+    }
 
     @Nullable
     @Override
@@ -38,6 +46,20 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if(getActivity().getClass().equals(MainActivity.class)&&viewModel.isPlaceSaved()){
+            Log.d("Test","进入读取存储的模式");
+            PlaceResponse.Place place = viewModel.getSavedPlace();
+            Intent intent = new Intent(getContext(), WeatherActivity.class);
+            intent.putExtra("location_lng",place.getLocation().getLng());
+            intent.putExtra("location_lat",place.getLocation().getLat());
+            intent.putExtra("place_name",place.getName());
+
+            startActivity(intent);
+            getActivity().finish();
+            return;
+        }
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
